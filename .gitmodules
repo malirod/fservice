@@ -1,0 +1,9 @@
+[submodule "tools/cmake/CMake-codecov"]
+	path = tools/cmake/CMake-codecov
+	url = https://github.com/RWTH-HPC/CMake-codecov.git
+[submodule "tools/cmake/sanitizers-cmake"]
+	path = tools/cmake/sanitizers-cmake
+	url = https://github.com/arsenm/sanitizers-cmake.git
+[submodule "tools/cmake/cmake-common-utils"]
+	path = tools/cmake/cmake-common-utils
+	url = https://github.com/malirod/cmake-common-utils.git
