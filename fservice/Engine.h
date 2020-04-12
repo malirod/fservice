@@ -8,6 +8,8 @@
 
 #include <folly/SocketAddress.h>
 
+#include <nngpp/nngpp.h>
+
 #include <atomic>
 
 namespace folly {
@@ -16,9 +18,16 @@ class EventBase;
 
 } // namespace folly
 
+namespace nng {
+
+class socket;
+
+} // namespace nng
+
 namespace fservice {
 
 class RepeatableTimeout;
+struct Work;
 
 /**
  * Implementation of Engine. Holds all and runs all business logic.
@@ -61,10 +70,24 @@ class Engine {
    */
   bool init();
 
+  struct Work {
+    using OnWorkHandler = std::function<void(Work& work)>;
+
+    enum class State { INIT, RECV, WAIT, SEND } state = State::INIT;
+    nng::aio aio;
+    nng::msg msg;
+    nng::ctx ctx;
+    const OnWorkHandler onWork;
+
+    Work(nng::socket_view sock, OnWorkHandler onWorkHandler);
+  };
+
  private:
   DECLARE_GET_LOGGER("Engine")
 
   void publishStats();
+
+  void onReqWork(Work& work);
 
   bool initiated_ = false;
 
@@ -75,6 +98,10 @@ class Engine {
   folly::EventBase* mainEventBase_ = nullptr;
 
   std::unique_ptr<RepeatableTimeout> timeout_;
+
+  std::unique_ptr<nng::socket> replySocket_;
+
+  std::vector<std::unique_ptr<Work>> replyWorkers_;
 };
 
 } // namespace fservice

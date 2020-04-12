@@ -38,6 +38,8 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(fmt REQUIRED)
 find_package(folly REQUIRED)
 find_package(log4cplus REQUIRED)
+find_package(nng REQUIRED)
+find_package(nngpp REQUIRED)
 
 # Lib configuration
 
@@ -78,7 +80,7 @@ target_include_directories(${LIB_NAME}
 add_sanitizers(${LIB_NAME})
 add_coverage(${LIB_NAME} fservice)
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_17)
-target_link_libraries(${LIB_NAME} PUBLIC fmt::fmt log4cplus::log4cplusS Folly::folly)
+target_link_libraries(${LIB_NAME} PUBLIC fmt::fmt log4cplus::log4cplusS Folly::folly nng::nng nng::nngpp)
 
 # App configuration
 set(APP_NAME fservice)
@@ -101,6 +103,7 @@ if (BUILD_TESTING)
         "fservice/tests/EnumUtilTest.cpp"
         "fservice/tests/PathUtilTest.cpp"
         "fservice/tests/ScopeGuardTest.cpp"
+        "fservice/tests/EngineTest.cpp"
         )
 
     add_library(${TEST_LIB_NAME} OBJECT ${TEST_SRC_LIST})
