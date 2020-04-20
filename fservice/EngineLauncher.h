@@ -5,6 +5,7 @@
 #pragma once
 
 #include <fservice/Engine.h>
+#include <fservice/IEngineEventHandler.h>
 #include <fservice/Logger.h>
 #include <fservice/Outcome.h>
 #include <fservice/SignalHandler.h>
@@ -23,7 +24,7 @@ namespace fservice {
 /**
  * Encapsulates logic of initialization of Engine and startup.
  */
-class EngineLauncher {
+class EngineLauncher final : public IEngineEventHandler {
  public:
   /**
    * Create ready to use instance of EngineLauncher.
@@ -53,9 +54,9 @@ class EngineLauncher {
 
   void onTerminationRequest();
 
-  void onEngineStarted();
+  void onEngineStarted() override;
 
-  void onEngineStopped();
+  void onEngineStopped() override;
 
   StartupConfig const startupConfig_;
 
@@ -67,6 +68,8 @@ class EngineLauncher {
   std::unique_ptr<Engine> engine_;
 
   folly::EventBase* mainEventBase_ = nullptr;
+
+  bool stopped_ = false;
 
   // std::unique_ptr<ThreadPool> thread_pool_main_;
 

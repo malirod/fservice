@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <fservice/IServerEventHandler.h>
 #include <fservice/Logger.h>
 
 #include <folly/SocketAddress.h>
@@ -20,17 +21,22 @@ namespace fservice {
 
 class RepeatableTimeout;
 
+class AsyncServer;
+
+struct IEngineEventHandler;
+
 /**
  * Implementation of Engine. Holds all and runs all business logic.
  */
-class Engine {
+class Engine final : public IServerEventHandler {
  public:
   /**
    * Creates instance of Engine.
    * @param address Engine address.
    */
   explicit Engine(folly::SocketAddress address,
-                  folly::EventBase* mainEventBase);
+                  folly::EventBase& mainEventBase,
+                  IEngineEventHandler& engineEventHandler);
 
   Engine& operator=(Engine const&) = delete;
   Engine(Engine const&) = delete;
@@ -41,25 +47,26 @@ class Engine {
    */
   ~Engine();
 
-  using OnStartedHandler = std::function<void()>;
-  using OnStoppedHandler = std::function<void()>;
-
   /**
    * Start Engine. Non-blocking call. Actual startup will be performed
    * asynchronously.
    */
-  void start(OnStartedHandler onStarted);
+  void start();
 
   /**
    * Trigger stop sequence. Non-blocking.
    */
-  void stop(OnStoppedHandler onStopped);
+  void stop();
 
   /**
    * Init Engine. Blocking call.
    * @return True if initiated and ready to go. False otherwise.
    */
   bool init();
+
+  // void processEvents();
+
+  void onSayHello(HelloRequest const& request, HelloReply& reply) override;
 
  private:
   DECLARE_GET_LOGGER("Engine")
@@ -72,9 +79,13 @@ class Engine {
 
   std::atomic_bool stopped_ = false;
 
-  folly::EventBase* mainEventBase_ = nullptr;
+  folly::EventBase& mainEventBase_;
+
+  IEngineEventHandler& engineEventHandler_;
 
   std::unique_ptr<RepeatableTimeout> timeout_;
+
+  std::unique_ptr<AsyncServer> server_;
 };
 
 } // namespace fservice

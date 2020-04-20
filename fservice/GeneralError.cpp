@@ -13,7 +13,8 @@ EnumStrings<GeneralError>::DataType EnumStrings<GeneralError>::data = {
     "Internal error",
     "Wrong startup parameter(s)",
     "Startup has failed",
-    "Operation interrupted"};
+    "Operation interrupted",
+    "RPC failed"};
 
 const boost::system::error_category& detail::ErrorCategory::get() {
   static ErrorCategory instance;

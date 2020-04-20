@@ -17,7 +17,8 @@ enum class GeneralError {
   InternalError,
   WrongStartupParams,
   StartupFailed,
-  Interrupted
+  Interrupted,
+  RpcFailed
 };
 
 namespace detail {

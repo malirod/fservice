@@ -22,7 +22,7 @@ This will allow to perform some code checks locally before posting changes to se
 
 ### Dependencies
 
-Libs: Folly, Catch2, Fmt, Log4cplus
+Libs: Folly, Catch2, Fmt, Log4cplus, trompeloeil
 
 Project uses [Vcpkg Package Manager](https://github.com/microsoft/vcpkg)
 
@@ -33,6 +33,7 @@ vcpkg install folly
 vcpkg install catch2
 vcpkg install fmt
 vcpkg install log4cplus
+vcpkg install trompeloeil
 ```
 
 CMake will try to automatically setup dependencies.
@@ -56,6 +57,10 @@ cmake --graphviz=graph .. && dot graph -T png -o graph.png
 To build release version with gcc run the following command
 
 `mkdir build-gcc-release && cd build-gcc-release && CXX=g++ cmake -DCMAKE_BUILD_TYPE=Release -GNinja .. && ninja`
+
+### Build with sanitizers
+
+You can enable sanitizers with `SANITIZE_ADDRESS`, `SANITIZE_MEMORY`, `SANITIZE_THREAD` or `SANITIZE_UNDEFINED` options in your CMake configuration. You can do this by passing e.g. `-DSANITIZE_ADDRESS=On` in your command line.
 
 ## Run
 

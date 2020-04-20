@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: MIT
+
+// Copyright (C) 2020 Malinovsky Rodion (rodionmalino@gmail.com)
+
+syntax = "proto3";
+
+package fservice;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}

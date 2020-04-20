@@ -22,7 +22,9 @@ EngineLauncher::EngineLauncher(StartupConfig startupConfig)
 
 void EngineLauncher::onTerminationRequest() {
   LOG_INFO("Termination request received. Stopping.");
-  engine_->stop([this]() { this->onEngineStopped(); });
+  stopped_ = true;
+  mainEventBase_->terminateLoopSoon();
+  engine_->stop();
 }
 
 void EngineLauncher::onEngineStarted() {
@@ -32,7 +34,6 @@ void EngineLauncher::onEngineStarted() {
 
 void EngineLauncher::onEngineStopped() {
   LOG_INFO("Engine stopped");
-  mainEventBase_->terminateLoopSoon();
 }
 
 ErrorCode EngineLauncher::init() {
@@ -47,14 +48,16 @@ ErrorCode EngineLauncher::init() {
       std::make_unique<SignalHandler>([this]() { onTerminationRequest(); });
   signalHandler_->install({SIGINT, SIGTERM});
 
-  auto cpuThreadExecutor = std::make_shared<folly::CPUThreadPoolExecutor>(
-      startupConfig_.threadsCount,
-      std::make_shared<folly::NamedThreadFactory>("CPUThread"));
-  folly::setCPUExecutor(cpuThreadExecutor);
+  // Setup CPU executor
+  // auto cpuThreadExecutor = std::make_shared<folly::CPUThreadPoolExecutor>(
+  //     startupConfig_.threadsCount,
+  //     std::make_shared<folly::NamedThreadFactory>("CPUThread"));
+  // folly::setCPUExecutor(cpuThreadExecutor);
 
   mainEventBase_ = folly::EventBaseManager::get()->getEventBase();
 
-  engine_ = std::make_unique<Engine>(startupConfig_.address, mainEventBase_);
+  engine_ =
+      std::make_unique<Engine>(startupConfig_.address, *mainEventBase_, *this);
 
   auto const initiated = engine_->init();
   return initiated ? make_error_code(GeneralError::Success)
@@ -70,10 +73,15 @@ ErrorCode EngineLauncher::doRun() {
   LOG_AUTO_TRACE();
   assert(mainEventBase_ != nullptr);
 
-  engine_->start([this]() { onEngineStarted(); });
+  engine_->start();
 
   LOG_INFO("Waiting for termination request");
   mainEventBase_->loopForever();
+  // Manual event loop (alternative to mainEventBase_->loopForever())
+  // while (!stopped_) {
+  // mainEventBase_->loopOnce(EVLOOP_NONBLOCK);
+  // engine_->processEvents();
+  //}
 
   return GeneralError::Success;
 }
