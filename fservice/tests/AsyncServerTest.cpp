@@ -38,6 +38,8 @@ TEST_CASE("Sync request and Async response", "[AsyncServer]") {
       REQUIRE(replyOrError.has_value());
       REQUIRE(replyOrError.value() == "Hello " + user);
     }
+    // eventLoop->runInEventBaseThread(
+    //    [eventLoop]() { eventLoop->terminateLoopSoon(); });
     eventLoop->terminateLoopSoon();
   });
 

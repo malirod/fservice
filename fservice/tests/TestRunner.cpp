@@ -5,6 +5,8 @@
 #include <fservice/Logger.h>
 #include <fservice/PathUtil.h>
 
+#include <folly/init/Init.h>
+
 #include <trompeloeil.hpp>
 
 #define CATCH_CONFIG_RUNNER
@@ -12,7 +14,7 @@
 
 int main(int argc, char* argv[]) {
   INIT_LOGGER(fservice::getExePath(argv[0]).replace_filename("logger.cfg"));
-
+  folly::init(&argc, &argv, true);
   // Configure Mocking to work with Catch2
   trompeloeil::set_reporter([](trompeloeil::severity s,
                                const char* file,
