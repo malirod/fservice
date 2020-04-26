@@ -30,6 +30,7 @@ Install dependencies with
 
 ```bash
 vcpkg install folly
+vcpkg install grpc
 vcpkg install catch2
 vcpkg install fmt
 vcpkg install log4cplus
@@ -39,6 +40,24 @@ vcpkg install trompeloeil
 CMake will try to automatically setup dependencies.
 
 CMake will automatically check required dependencies and setup them taking into account current compiler (clang or gcc).
+
+#### Vcpkg build with dependencies with different compiler
+
+By defualt Vcpkg uses gcc to build dependencies. To build with other compiler set corresponding env vars.
+
+E.g. to build fmt with clang use `CC=clang CXX=clang++ vcpkg install fmt`
+
+### VS Code integration
+
+Edit setting.json (Setting -> Cmake: Configure setting)
+
+Add
+
+```text
+"cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "<vcpkg root>/scripts/buildsystems/vcpkg.cmake"
+}
+```
 
 ### Draw deps with cmake
 
