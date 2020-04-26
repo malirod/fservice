@@ -4,7 +4,6 @@
 
 #include <fservice/Engine.h>
 #include <fservice/EngineLauncher.h>
-#include <fservice/GeneralError.h>
 #include <fservice/ScopeGuard.h>
 #include <fservice/SignalHandler.h>
 
@@ -36,7 +35,7 @@ void EngineLauncher::onEngineStopped() {
   LOG_INFO("Engine stopped");
 }
 
-ErrorCode EngineLauncher::init() {
+std::error_code EngineLauncher::init() {
   LOG_AUTO_TRACE();
 
   LOG_INFOF("Address: {}:{}; Threads: {}",
@@ -60,8 +59,7 @@ ErrorCode EngineLauncher::init() {
       std::make_unique<Engine>(startupConfig_.address, *mainEventBase_, *this);
 
   auto const initiated = engine_->init();
-  return initiated ? make_error_code(GeneralError::Success)
-                   : make_error_code(GeneralError::StartupFailed);
+  return initiated ? GeneralError::Success : GeneralError::StartupFailed;
 }
 
 void EngineLauncher::deInit() {
@@ -69,7 +67,7 @@ void EngineLauncher::deInit() {
   mainEventBase_ = nullptr;
 }
 
-ErrorCode EngineLauncher::doRun() {
+std::error_code EngineLauncher::doRun() {
   LOG_AUTO_TRACE();
   assert(mainEventBase_ != nullptr);
 
@@ -86,7 +84,7 @@ ErrorCode EngineLauncher::doRun() {
   return GeneralError::Success;
 }
 
-ErrorCode EngineLauncher::run() {
+std::error_code EngineLauncher::run() {
   LOG_AUTO_TRACE();
 
   const auto errorCode = init();

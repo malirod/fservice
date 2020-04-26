@@ -5,9 +5,9 @@
 #pragma once
 
 #include <fservice/Engine.h>
+#include <fservice/GeneralError.h>
 #include <fservice/IEngineEventHandler.h>
 #include <fservice/Logger.h>
-#include <fservice/Outcome.h>
 #include <fservice/SignalHandler.h>
 #include <fservice/StartupConfig.h>
 
@@ -41,16 +41,16 @@ class EngineLauncher final : public IEngineEventHandler {
    * Setup environment, run Engine and wait until it will finish.
    * @return Execution result.
    */
-  ErrorCode run();
+  std::error_code run();
 
  private:
   DECLARE_GET_LOGGER("EngineLauncher")
 
-  ErrorCode init();
+  std::error_code init();
 
   void deInit();
 
-  ErrorCode doRun();
+  std::error_code doRun();
 
   void onTerminationRequest();
 

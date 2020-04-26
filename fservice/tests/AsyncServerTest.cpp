@@ -35,7 +35,7 @@ TEST_CASE("Sync request and Async response", "[AsyncServer]") {
     for (int i = 1; i <= 5; ++i) {
       auto const user = std::string{"world " + std::to_string(i)};
       auto const replyOrError = client.SayHello(user);
-      REQUIRE(replyOrError.has_value());
+      REQUIRE(replyOrError.hasValue());
       REQUIRE(replyOrError.value() == "Hello " + user);
     }
     // eventLoop->runInEventBaseThread(
@@ -55,6 +55,6 @@ TEST_CASE("Client connect when no server available", "[AsyncServer]") {
 
   auto const user = std::string{"world "};
   auto const replyOrError = client.SayHello(user);
-  REQUIRE(replyOrError.has_error());
+  REQUIRE(!replyOrError.hasValue());
   REQUIRE(replyOrError.error() == fservice::GeneralError::RpcFailed);
 }

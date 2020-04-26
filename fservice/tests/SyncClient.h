@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include <fservice/GeneralError.h>
 #include <fservice/Logger.h>
-#include <fservice/Outcome.h>
 #include <protos/Greeter.grpc.pb.h>
+
+#include <folly/Expected.h>
 
 #include <atomic>
 
@@ -23,7 +25,8 @@ class SyncClient final {
 
   /* Assembles the client's payload, sends it and presents the response back
    * from the server. */
-  outcome::result<std::string> SayHello(std::string const& user);
+  folly::Expected<std::string, std::error_code> SayHello(
+      std::string const& user);
 
  private:
   DECLARE_GET_LOGGER("SyncClient")

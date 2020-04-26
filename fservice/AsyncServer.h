@@ -20,7 +20,7 @@ class EventBase;
 
 namespace fservice {
 
-class IServerEventHandler;
+struct IServerEventHandler;
 
 /* Grps Async server */
 class AsyncServer final {

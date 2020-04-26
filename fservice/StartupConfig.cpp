@@ -16,7 +16,8 @@
 
 namespace fservice {
 
-outcome::result<StartupConfig> processCmdArgs(int argc, char** argv) {
+folly::Expected<StartupConfig, std::error_code> processCmdArgs(int argc,
+                                                               char** argv) {
   namespace po = boost::program_options;
 
   auto const printHelp = [](auto const& options) { std::cout << options; };
@@ -73,17 +74,18 @@ outcome::result<StartupConfig> processCmdArgs(int argc, char** argv) {
   } catch (po::error const& error) {
     printError(error);
     printHelp(allOptions);
-    return GeneralError::WrongStartupParams;
+    return folly::makeUnexpected(
+        make_error_code(GeneralError::WrongStartupParams));
   }
 
   if (vm.count("help") != 0u) {
     printHelp(allOptions);
-    return GeneralError::Interrupted;
+    return folly::makeUnexpected(make_error_code(GeneralError::Interrupted));
   }
 
   if (vm.count("version") != 0u) {
     printVersion();
-    return GeneralError::Interrupted;
+    return folly::makeUnexpected(make_error_code(GeneralError::Interrupted));
   }
 
   try {
@@ -93,7 +95,8 @@ outcome::result<StartupConfig> processCmdArgs(int argc, char** argv) {
   } catch (std::exception const& error) {
     printError(error);
     printHelp(allOptions);
-    return GeneralError::WrongStartupParams;
+    return folly::makeUnexpected(
+        make_error_code(GeneralError::WrongStartupParams));
   }
 }
 

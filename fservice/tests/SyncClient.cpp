@@ -2,7 +2,6 @@
 
 // Copyright (C) 2020 Malinovsky Rodion (rodionmalino@gmail.com)
 
-#include <fservice/GeneralError.h>
 #include <fservice/tests/SyncClient.h>
 
 namespace fservice {
@@ -11,7 +10,8 @@ SyncClient::SyncClient(std::shared_ptr<grpc::Channel> channel)
     : stub_(Greeter::NewStub(channel)) {
 }
 
-outcome::result<std::string> SyncClient::SayHello(std::string const& user) {
+folly::Expected<std::string, std::error_code> SyncClient::SayHello(
+    std::string const& user) {
   LOG_TRACEF("Sending: {}", user);
   // Data we are sending to the server.
   HelloRequest request;
@@ -32,7 +32,7 @@ outcome::result<std::string> SyncClient::SayHello(std::string const& user) {
     return reply.message();
   } else {
     LOG_ERRORF("Error: {}:{}", status.error_code(), status.error_message());
-    return GeneralError::RpcFailed;
+    return folly::makeUnexpected(make_error_code(GeneralError::RpcFailed));
   }
 }
 

@@ -126,7 +126,6 @@ set(LIB_SRC_LIST
     "fservice/Version.cpp"
     "fservice/Logger.h"
     "fservice/Logger.cpp"
-    "fservice/Outcome.h"
     "fservice/PathUtil.h"
     "fservice/PathUtil.cpp"
     "fservice/ScopeGuard.h"
