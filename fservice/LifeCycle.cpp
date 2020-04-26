@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
   try {
     auto const startupConfigOrError = processCmdArgs(argc, argv);
-    if (startupConfigOrError.has_error()) {
+    if (!startupConfigOrError) {
       if (startupConfigOrError.error() == GeneralError::Interrupted) {
         return make_error_code(GeneralError::Success).value();
       } else if (startupConfigOrError.error() ==

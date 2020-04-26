@@ -16,11 +16,12 @@ EnumStrings<GeneralError>::DataType EnumStrings<GeneralError>::data = {
     "Operation interrupted",
     "RPC failed"};
 
-const boost::system::error_category& detail::ErrorCategory::get() {
+const std::error_category& detail::ErrorCategory::get() {
   static ErrorCategory instance;
   return instance;
 }
-boost::system::error_code make_error_code(GeneralError error) noexcept {
+
+std::error_code make_error_code(GeneralError error) noexcept {
   return {ToIntegral(error), detail::ErrorCategory::get()};
 }
 

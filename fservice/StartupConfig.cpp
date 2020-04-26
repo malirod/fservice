@@ -16,7 +16,8 @@
 
 namespace fservice {
 
-outcome::result<StartupConfig> processCmdArgs(int argc, char** argv) {
+folly::Expected<StartupConfig, GeneralError> processCmdArgs(int argc,
+                                                            char** argv) {
   namespace po = boost::program_options;
 
   auto const printHelp = [](auto const& options) { std::cout << options; };

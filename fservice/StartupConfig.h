@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <fservice/Outcome.h>
-
+#include <folly/Expected.h>
 #include <folly/SocketAddress.h>
 
 #include <stdint.h>
@@ -19,6 +18,7 @@ struct StartupConfig {
   std::uint32_t const threadsCount = 0u;
 };
 
-outcome::result<StartupConfig> processCmdArgs(int argc, char** argv);
+folly::Expected<StartupConfig, GeneralError> processCmdArgs(int argc,
+                                                            char** argv);
 
 } // namespace fservice
