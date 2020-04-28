@@ -81,8 +81,21 @@ void AsyncServer::CallData::proceed(bool const ok) {
     new CallData(eventLoop_, service_, completionQueue_, serverEventHandler_);
 
     // Handle request in the event loop
+    eventLoop_->runInEventBaseThread([this]() {
+      serverEventHandler_->onSayHello(request_, reply_);
+
+      // And we are done! Let the gRPC runtime know we've
+      // finished, using
+      // the memory address of this instance as the uniquely identifying tag
+      // for the event.
+      status_ = CallStatus::FINISH;
+      responder_.Finish(reply_, grpc::Status::OK, this);
+    });
+
     // eventLoop_->runInEventBaseThread([this]() {
     //  serverEventHandler_->onSayHello(request_, reply_);
+
+    /*
     reply_.set_message("Hello " + request_.name());
 
     // And we are done! Let the gRPC runtime know we've finished, using
@@ -90,6 +103,7 @@ void AsyncServer::CallData::proceed(bool const ok) {
     // for the event.
     status_ = CallStatus::FINISH;
     responder_.Finish(reply_, grpc::Status::OK, this);
+    */
   } else {
     // Not ok or CallStatus::FINISH
     // Once in the FINISH state, deallocate ourselves (CallData).
